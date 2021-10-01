@@ -1,0 +1,482 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+Assignment 5_Neeb.exe -- emu8086 assembler version: 4.08  
+ 
+[ 10/1/2021  --  3:11:35 PM ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       ; multi-segment executable file template.
+[   2]        :                                       .MODEL  small
+[   3]        :                                       .STACK  100h
+[   4]        :                                       
+[   5]        :                                       .DATA
+[   6]        :                                       ; add your data here!
+[   7]    0100: 2A 2A 2A 20 53 70 61 63 65 6C 79 20   welcome_msg DB      "*** Spacely Sprockets Order Form ***$",lf,cr,"Please enter the following data in correct format.$"
+                53 70 72 6F 63 6B 65 74 73 20 4F 72 
+                64 65 72 20 46 6F 72 6D 20 2A 2A 2A 
+                24 0A 0D 50 6C 65 61 73 65 20 65 6E 
+                74 65 72 20 74 68 65 20 66 6F 6C 6C 
+                6F 77 69 6E 67 20 64 61 74 61 20 69 
+                6E 20 63 6F 72 72 65 63 74 20 66 6F 
+                72 6D 61 74 2E 24                   
+[   8]    015A: 53 74 72 75 63 74 20 77 72 69 74 74   file_msg    DB      "Struct written to file C:\asm\test.txt$"
+                65 6E 20 74 6F 20 66 69 6C 65 20 43 
+                3A 5C 61 73 6D 5C 74 65 73 74 2E 74 
+                78 74 24                            
+[   9]    0181: 50 72 6F 67 72 61 6D 20 43 6F 6D 70   bye_msg     DB      "Program Complete!$"
+                6C 65 74 65 21 24                   
+[  10]        :                                       
+[  11]    0193: 4F 72 64 65 72 20 4E 75 6D 62 65 72   str1        DB      "Order Number: $"
+                3A 20 24                            
+[  12]    01A2: 43 75 73 74 6F 6D 65 72 20 49 44 3A   str2        DB      "Customer ID: $"
+                20 24                               
+[  13]    01B0: 53 70 72 6F 63 6B 65 74 20 54 79 70   str3        DB      "Sprocket Type: $"
+                65 3A 20 24                         
+[  14]    01C0: 50 61 72 74 20 51 75 61 6E 74 69 74   str4        DB      "Part Quantity: $"
+                79 3A 20 24                         
+[  15]    01D0: 4F 72 64 65 72 20 54 6F 74 61 6C 3A   str5        DB      "Order Total: $"
+                20 24                               
+[  16]        :                                       
+[  17]    01DE: 00 00 00 00 00 00 00 00 00 00 00 00   file_buf    DB      24 DUP (?)                ;buffer zone
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                                                    
+[  18]    01F6: 43 3A 5C 61 73 6D 5C 74 65 73 74 2E   file_name   DB      'C:\asm\test.txt',00h       ;ASCIIZ string
+                74 78 74 00                         
+[  19]    0206: 43 3A 5C 61 73 6D 00                  dir_name    DB      'C:\asm',00h                ;ASCIIZ string
+[  20]        :                                       
+[  21]    020D:                                       DATASTRUCT   LABEL   BYTE
+[  22]    020D: 18                                    MaxLen       DB      24
+[  23]    020E: 00                                    ActLen       DB      0
+[  24]    020F: 00 00 00 00 00 00 00 00 00 00 00 00   DataFld      DB      24 DUP(?)
+                00 00 00 00 00 00 00 00 00 00 00 00 
+                                                    
+[  25]    0227: 0D 0A 24                              CRLFBuf      DB      0Dh,0Ah,'$'
+[  26]        :                                       
+[  27]        :                                       
+[  28]    022A: 00 00                                 handle1      DW      0
+[  29]        :                                       
+[  30]        :                                       ;-----------------------------------------------------
+[  31]        :                                       ; err_chk routine related data
+[  32]        :                                       ;-----------------------------------------------------
+[  33]        :                                       
+[  34]        :                                       cr        EQU     0Dh     ;carriage return
+[  35]        :                                       lf        EQU     0Ah     ;line feed
+[  36]    022C: 00 00 46 01 60 01 71 01 82 01 98 01   errtbl    DW      0,err1,err2,err3,err4,err5,err6
+                A8 01                               
+[  37]    023A: 00 00 00 00 00 00 00 00 00 00         DW      5 DUP (0)
+[  38]    0244: B9 01                                 DW      err12
+[  39]    0246: 49 6E 76 61 6C 69 64 20 66 75 6E 63   err1      DB      'Invalid function number',lf,cr,'$'
+                74 69 6F 6E 20 6E 75 6D 62 65 72 0A 
+                0D 24                               
+[  40]    0260: 46 69 6C 65 20 6E 6F 74 20 66 6F 75   err2      DB      'File not found',lf,cr,'$'
+                6E 64 0A 0D 24                      
+[  41]    0271: 50 61 74 68 20 6E 6F 74 20 66 6F 75   err3      DB      'Path not found',lf,cr,'$'
+                6E 64 0A 0D 24                      
+[  42]    0282: 54 6F 6F 20 6D 61 6E 79 20 6F 70 65   err4      DB      'Too many open files',lf,cr,'$'
+                6E 20 66 69 6C 65 73 0A 0D 24       
+[  43]    0298: 41 63 63 65 73 73 20 64 65 6E 69 65   err5      DB      'Access denied',lf,cr,'$'
+                64 0A 0D 24                         
+[  44]    02A8: 49 6E 76 61 6C 69 64 20 68 61 6E 64   err6      DB      'Invalid handle',lf,cr,'$'
+                6C 65 0A 0D 24                      
+[  45]    02B9: 49 6E 76 61 6C 69 64 20 61 63 63 65   err12     DB      'Invalid access code',lf,cr,'$'
+                73 73 20 63 6F 64 65 0A 0D 24       
+[  46]        :                                       
+[  47]        :                                       
+[  48]        :                                       .CODE
+[  49]    02D0:                                       start:
+[  50]        :                                       ; set segment registers:
+[  51]    02D0: B8 10 00                              mov ax, data
+[  52]    02D3: 8E D8                                 mov ds, ax
+[  53]        :                                       
+[  54]        :                                       ; add your code here
+[  55]        :                                       
+[  56]        :                                       ;Print welcome message
+[  57]    02D5: BA 00 00                              lea     dx,welcome_msg
+[  58]    02D8: B4 09                                 mov     ah,09h
+[  59]    02DA: CD 21                                 int     21h
+[  60]        :                                       
+[  61]    02DC: E8 34 00                              call    display_newline
+[  62]        :                                       
+[  63]    02DF: E8 8C 01                              call    create_directory
+[  64]        :                                       
+[  65]    02E2: E8 99 01                              call    create_file
+[  66]        :                                       
+[  67]    02E5: E8 2B 00                              call    display_newline
+[  68]        :                                       
+[  69]    02E8: E8 37 00                              call    read_data
+[  70]        :                                       
+[  71]    02EB: E8 25 00                              call    display_newline
+[  72]        :                                       
+[  73]    02EE: E8 9E 01                              call    close_file
+[  74]        :                                       
+[  75]        :                                       ;Print file message
+[  76]    02F1: E8 1F 00                              call    display_newline
+[  77]    02F4: BA 5A 00                              lea     dx,file_msg
+[  78]    02F7: B4 09                                 mov     ah,09h
+[  79]    02F9: CD 21                                 int     21h
+[  80]        :                                       
+[  81]    02FB: E8 15 00                              call    display_newline
+[  82]        :                                       
+[  83]    02FE: E8 12 00                              call    display_newline
+[  84]        :                                       
+[  85]    0301: E8 97 01                              call    read_file
+[  86]        :                                       
+[  87]        :                                       ;Print bye message
+[  88]    0304: E8 0C 00                              call    display_newline
+[  89]    0307: BA 81 00                              lea     dx,bye_msg
+[  90]    030A: B4 09                                 mov     ah,09h
+[  91]    030C: CD 21                                 int     21h
+[  92]        :                                       
+[  93]    030E: B8 00 4C                              mov ax, 4c00h ; exit to operating system.
+[  94]    0311: CD 21                                 int 21h
+[  95]        :                                       
+[  96]        :                                       ;--------------------------------------
+[  97]        :                                       ; display_newline - used simply to crlf
+[  98]        :                                       ;--------------------------------------
+[  99]    0313:                                       display_newline   PROC    near
+[ 100]    0313: BA 0D 00                              mov dx,13
+[ 101]    0316: B4 02                                 mov ah,2
+[ 102]    0318: CD 21                                 int 21h
+[ 103]    031A: BA 0A 00                              mov dx,10
+[ 104]    031D: B4 02                                 mov ah,2
+[ 105]    031F: CD 21                                 int 21h
+[ 106]    0321: C3                                    ret
+[ 107]        :                                       display_newline   ENDP
+[ 108]        :                                       
+[ 109]        :                                       ;--------------------------------------
+[ 110]        :                                       ; read_data - used to read data into struct
+[ 111]        :                                       ;--------------------------------------
+[ 112]    0322:                                       read_data         PROC    near
+[ 113]        :                                       ;Display prompt 1
+[ 114]    0322: BA 93 00                              lea     dx, str1
+[ 115]    0325: B4 09                                 mov     ah,09h
+[ 116]    0327: CD 21                                 int     21h
+[ 117]        :                                       
+[ 118]        :                                       ;Write prompt 1 to file
+[ 119]    0329: B9 0E 00                              mov     cx,14                ;actual bytes to write
+[ 120]    032C: B4 40                                 mov     ah,40h               ;write to file
+[ 121]    032E: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 122]    0332: BA 93 00                              lea     dx,str1              ;address to actual data &crlf&$
+[ 123]    0335: CD 21                                 int     21h
+[ 124]    0337: E8 AD 01                              call    err_chk              ;exit on error
+[ 125]        :                                       
+[ 126]    033A: E8 1E 01                              call    get_input
+[ 127]        :                                       
+[ 128]        :                                       ;Write input 1 to file
+[ 129]    033D: 8B CB                                 mov     cx,bx
+[ 130]    033F: B4 40                                 mov     ah,40h               ;write to file
+[ 131]    0341: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 132]    0345: BA 0F 01                              lea     dx,DATASTRUCT+2      ;address to actual data &crlf&$
+[ 133]    0348: CD 21                                 int     21h
+[ 134]    034A: E8 9A 01                              call    err_chk              ;exit on error
+[ 135]        :                                       
+[ 136]        :                                       ;Write CRLF to file
+[ 137]    034D: B9 02 00                              mov     cx,2
+[ 138]    0350: B4 40                                 mov     ah,40h               ;write to file
+[ 139]    0352: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 140]    0356: BA 27 01                              lea     dx,CRLFbuf           ;address to actual data &crlf&$
+[ 141]    0359: CD 21                                 int     21h
+[ 142]    035B: E8 89 01                              call    err_chk              ;exit on error
+[ 143]        :                                       
+[ 144]    035E: E8 B2 FF                              call    display_newline
+[ 145]        :                                       
+[ 146]        :                                       ;Display prompt 2
+[ 147]    0361: BA A2 00                              lea     dx, str2
+[ 148]    0364: B4 09                                 mov     ah,09h
+[ 149]    0366: CD 21                                 int     21h
+[ 150]        :                                       
+[ 151]        :                                       ;Write prompt 2 to file
+[ 152]    0368: B9 0D 00                              mov     cx,13                ;actual bytes to write
+[ 153]    036B: B4 40                                 mov     ah,40h               ;write to file
+[ 154]    036D: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 155]    0371: BA A2 00                              lea     dx,str2              ;address to actual data &crlf&$
+[ 156]    0374: CD 21                                 int     21h
+[ 157]    0376: E8 6E 01                              call    err_chk              ;exit on error
+[ 158]        :                                       
+[ 159]    0379: E8 DF 00                              call    get_input
+[ 160]        :                                       
+[ 161]        :                                       ;Write input 2 to file
+[ 162]    037C: 8B CB                                 mov     cx,bx
+[ 163]    037E: B4 40                                 mov     ah,40h               ;write to file
+[ 164]    0380: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 165]    0384: BA 0F 01                              lea     dx,DATASTRUCT+2      ;address to actual data &crlf&$
+[ 166]    0387: CD 21                                 int     21h
+[ 167]    0389: E8 5B 01                              call    err_chk              ;exit on error
+[ 168]        :                                       
+[ 169]        :                                       ;Write CRLF to file
+[ 170]    038C: B9 02 00                              mov     cx,2
+[ 171]    038F: B4 40                                 mov     ah,40h               ;write to file
+[ 172]    0391: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 173]    0395: BA 27 01                              lea     dx,CRLFbuf           ;address to actual data &crlf&$
+[ 174]    0398: CD 21                                 int     21h
+[ 175]    039A: E8 4A 01                              call    err_chk              ;exit on error
+[ 176]        :                                       
+[ 177]    039D: E8 73 FF                              call    display_newline
+[ 178]        :                                       
+[ 179]        :                                       ;Display prompt 3
+[ 180]    03A0: BA B0 00                              lea     dx, str3
+[ 181]    03A3: B4 09                                 mov     ah,09h
+[ 182]    03A5: CD 21                                 int     21h
+[ 183]        :                                       
+[ 184]        :                                       ;Write prompt 3 to file
+[ 185]    03A7: B9 0F 00                              mov     cx,15                ;actual bytes to write
+[ 186]    03AA: B4 40                                 mov     ah,40h               ;write to file
+[ 187]    03AC: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 188]    03B0: BA B0 00                              lea     dx,str3              ;address to actual data &crlf&$
+[ 189]    03B3: CD 21                                 int     21h
+[ 190]    03B5: E8 2F 01                              call    err_chk              ;exit on error
+[ 191]        :                                       
+[ 192]    03B8: E8 A0 00                              call    get_input
+[ 193]        :                                       
+[ 194]        :                                       ;Write input 3 to file
+[ 195]    03BB: 8B CB                                 mov     cx,bx
+[ 196]    03BD: B4 40                                 mov     ah,40h               ;write to file
+[ 197]    03BF: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 198]    03C3: BA 0F 01                              lea     dx,DATASTRUCT+2      ;address to actual data &crlf&$
+[ 199]    03C6: CD 21                                 int     21h
+[ 200]    03C8: E8 1C 01                              call    err_chk              ;exit on error
+[ 201]        :                                       
+[ 202]        :                                       ;Write CRLF to file
+[ 203]    03CB: B9 02 00                              mov     cx,2
+[ 204]    03CE: B4 40                                 mov     ah,40h               ;write to file
+[ 205]    03D0: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 206]    03D4: BA 27 01                              lea     dx,CRLFbuf           ;address to actual data &crlf&$
+[ 207]    03D7: CD 21                                 int     21h
+[ 208]    03D9: E8 0B 01                              call    err_chk              ;exit on error
+[ 209]        :                                       
+[ 210]    03DC: E8 34 FF                              call    display_newline
+[ 211]        :                                       
+[ 212]        :                                       ;Display prompt 4
+[ 213]    03DF: BA C0 00                              lea     dx, str4
+[ 214]    03E2: B4 09                                 mov     ah,09h
+[ 215]    03E4: CD 21                                 int     21h
+[ 216]        :                                       
+[ 217]        :                                       ;Write prompt 4 to file
+[ 218]    03E6: B9 0F 00                              mov     cx,15                ;actual bytes to write
+[ 219]    03E9: B4 40                                 mov     ah,40h               ;write to file
+[ 220]    03EB: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 221]    03EF: BA C0 00                              lea     dx,str4              ;address to actual data &crlf&$
+[ 222]    03F2: CD 21                                 int     21h
+[ 223]    03F4: E8 F0 00                              call    err_chk              ;exit on error
+[ 224]        :                                       
+[ 225]    03F7: E8 61 00                              call    get_input
+[ 226]        :                                       
+[ 227]        :                                       ;Write input 4 to file
+[ 228]    03FA: 8B CB                                 mov     cx,bx
+[ 229]    03FC: B4 40                                 mov     ah,40h               ;write to file
+[ 230]    03FE: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 231]    0402: BA 0F 01                              lea     dx,DATASTRUCT+2      ;address to actual data &crlf&$
+[ 232]    0405: CD 21                                 int     21h
+[ 233]    0407: E8 DD 00                              call    err_chk              ;exit on error
+[ 234]        :                                       
+[ 235]        :                                       ;Write CRLF to file
+[ 236]    040A: B9 02 00                              mov     cx,2
+[ 237]    040D: B4 40                                 mov     ah,40h               ;write to file
+[ 238]    040F: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 239]    0413: BA 27 01                              lea     dx,CRLFbuf           ;address to actual data &crlf&$
+[ 240]    0416: CD 21                                 int     21h
+[ 241]    0418: E8 CC 00                              call    err_chk              ;exit on error
+[ 242]        :                                       
+[ 243]    041B: E8 F5 FE                              call    display_newline
+[ 244]        :                                       
+[ 245]        :                                       ;Display prompt 5
+[ 246]    041E: BA D0 00                              lea     dx, str5
+[ 247]    0421: B4 09                                 mov     ah,09h
+[ 248]    0423: CD 21                                 int     21h
+[ 249]        :                                       
+[ 250]        :                                       ;Write prompt 5 to file
+[ 251]    0425: B9 0D 00                              mov     cx,13                ;actual bytes to write
+[ 252]    0428: B4 40                                 mov     ah,40h               ;write to file
+[ 253]    042A: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 254]    042E: BA D0 00                              lea     dx,str5              ;address to actual data &crlf&$
+[ 255]    0431: CD 21                                 int     21h
+[ 256]    0433: E8 B1 00                              call    err_chk              ;exit on error
+[ 257]        :                                       
+[ 258]    0436: E8 22 00                              call    get_input
+[ 259]        :                                       
+[ 260]        :                                       ;Write input 5 to file
+[ 261]    0439: 8B CB                                 mov     cx,bx
+[ 262]    043B: B4 40                                 mov     ah,40h               ;write to file
+[ 263]    043D: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 264]    0441: BA 0F 01                              lea     dx,DATASTRUCT+2      ;address to actual data &crlf&$
+[ 265]    0444: CD 21                                 int     21h
+[ 266]    0446: E8 9E 00                              call    err_chk              ;exit on error
+[ 267]        :                                       
+[ 268]        :                                       ;Write CRLF to file
+[ 269]    0449: B9 02 00                              mov     cx,2
+[ 270]    044C: B4 40                                 mov     ah,40h               ;write to file
+[ 271]    044E: 8B 1E 2A 01                           mov     bx,handle1           ;file handle
+[ 272]    0452: BA 27 01                              lea     dx,CRLFbuf           ;address to actual data &crlf&$
+[ 273]    0455: CD 21                                 int     21h
+[ 274]    0457: E8 8D 00                              call    err_chk              ;exit on error
+[ 275]    045A: C3                                    ret
+[ 276]        :                                       read_data         ENDP
+[ 277]        :                                       
+[ 278]        :                                       ;--------------------------------------
+[ 279]        :                                       ; get_input - used to read data into struct
+[ 280]        :                                       ;--------------------------------------
+[ 281]    045B:                                       get_input      PROC    near
+[ 282]    045B: BA 0D 01                              lea     dx,DATASTRUCT
+[ 283]    045E: B4 0A                                 mov     ah,0ah              ;request input
+[ 284]    0460: CD 21                                 int     21h
+[ 285]    0462: B7 00                                 mov     bh,00h
+[ 286]    0464: 8A 1E 0E 01                           mov     bl,ActLen
+[ 287]    0468: C6 87 0F 01 00                        mov     dataFld[bx],00h     ;CRLF at end
+[ 288]    046D: C3                                    ret
+[ 289]        :                                       get_input      ENDP
+[ 290]        :                                       
+[ 291]        :                                       ;--------------------------------------
+[ 292]        :                                       ; create_directory - used to create the file's directory
+[ 293]        :                                       ;--------------------------------------
+[ 294]    046E:                                       create_directory  PROC    near
+[ 295]    046E: B8 10 00                              mov     ax, SEG dir_name
+[ 296]    0471: 8E D8                                 mov     ds, ax
+[ 297]    0473: BA 06 01                              mov     dx, OFFSET dir_name ;pointer to directory name
+[ 298]    0476: B4 39                                 mov     ah,39h             ;Create directory
+[ 299]    0478: CD 21                                 int     21h
+[ 300]    047A: E8 6A 00                              call    err_chk            ;trap any errors which occur
+[ 301]    047D: C3                                    ret
+[ 302]        :                                       create_directory  ENDP
+[ 303]        :                                       
+[ 304]        :                                       ;--------------------------------------
+[ 305]        :                                       ; create_file - used to create file
+[ 306]        :                                       ;--------------------------------------
+[ 307]    047E:                                       create_file       PROC    near
+[ 308]    047E: B4 3C                                 mov     ah,3Ch          ;Create file
+[ 309]    0480: B9 00 00                              mov     cx,00           ;"normal" attribute
+[ 310]    0483: BA F6 00                              lea     dx,file_name    ;pointer to name of file
+[ 311]    0486: CD 21                                 int     21h
+[ 312]    0488: E8 5C 00                              call    err_chk         ;so, exit on error
+[ 313]    048B: A3 2A 01                              mov     handle1,ax      ;otherwise, this is our handle
+[ 314]    048E: C3                                    ret
+[ 315]        :                                       create_file       ENDP
+[ 316]        :                                       
+[ 317]        :                                       ;--------------------------------------
+[ 318]        :                                       ; close_file - closes the file after data manipulation
+[ 319]        :                                       ;--------------------------------------
+[ 320]    048F:                                       close_file   PROC    near
+[ 321]    048F: B4 3E                                 mov     ah,3Eh          ;close file
+[ 322]    0491: 8B 1E 2A 01                           mov     bx,handle1      ;file handle
+[ 323]    0495: CD 21                                 int     21h
+[ 324]    0497: E8 4D 00                              call    err_chk         ;exit on error
+[ 325]    049A: C3                                    ret
+[ 326]        :                                       close_file   ENDP
+[ 327]        :                                       
+[ 328]        :                                       ;--------------------------------------
+[ 329]        :                                       ; read_file
+[ 330]        :                                       ;--------------------------------------
+[ 331]    049B:                                       read_file        PROC    near
+[ 332]    049B: B4 3D                                 mov     ah,3Dh          ;open file
+[ 333]    049D: B0 00                                 mov     al,000b         ;read access
+[ 334]    049F: BA F6 00                              lea     dx,file_name    ;address
+[ 335]    04A2: CD 21                                 int     21h
+[ 336]    04A4: E8 40 00                              call    err_chk         ;exit on error
+[ 337]    04A7: A3 2A 01                              mov     handle1,ax      ;save file handle
+[ 338]        :                                       
+[ 339]        :                                       ;Get length of file
+[ 340]    04AA: B4 42                                 mov     ah,42h          ;move pointer
+[ 341]    04AC: B0 02                                 mov     al,02h          ;offset from end of file
+[ 342]    04AE: 8B 1E 2A 01                           mov     bx,handle1      ;file handle
+[ 343]    04B2: 33 C9                                 xor     cx,cx           ;set cx = 0
+[ 344]    04B4: 33 D2                                 xor     dx,dx           ;set dx = 0
+[ 345]    04B6: CD 21                                 int     21h             ;file length in DS:AX
+[ 346]    04B8: 50                                    push    ax              ;AX = file length
+[ 347]        :                                       
+[ 348]    04B9: E8 2B 00                              call    err_chk
+[ 349]        :                                       
+[ 350]        :                                       ;Reset file pointer to beginning of file
+[ 351]    04BC: B4 42                                 mov     ah,42h          ;move pointer
+[ 352]    04BE: B0 00                                 mov     al,00h          ;set at start of file
+[ 353]    04C0: 8B 1E 2A 01                           mov     bx,handle1      ;file handle
+[ 354]    04C4: 33 C9                                 xor     cx,cx           ;CX = 0
+[ 355]    04C6: 33 D2                                 xor     dx,dx           ;DX = 0
+[ 356]    04C8: CD 21                                 int     21h
+[ 357]    04CA: E8 1A 00                              call    err_chk
+[ 358]        :                                       
+[ 359]        :                                       ;Read file
+[ 360]    04CD: B4 3F                                 mov     ah,3Fh          ;read file
+[ 361]    04CF: 8B 1E 2A 01                           mov     bx,handle1      ;file handle
+[ 362]    04D3: 59                                    pop     cx              ;read byes
+[ 363]    04D4: BA DE 00                              lea     dx,file_buf     ;address
+[ 364]    04D7: CD 21                                 int     21h
+[ 365]    04D9: E8 0B 00                              call    err_chk
+[ 366]        :                                       
+[ 367]        :                                       ;Display data in file buffer
+[ 368]    04DC: B4 40                                 mov     ah,40h          ;write to device
+[ 369]    04DE: BB 01 00                              mov     bx,1            ;device = screen
+[ 370]    04E1: BA DE 00                              lea     dx,file_buf     ;address
+[ 371]    04E4: CD 21                                 int     21h
+[ 372]        :                                       
+[ 373]    04E6: C3                                    ret
+[ 374]        :                                       read_file        ENDP
+[ 375]        :                                       
+[ 376]        :                                       ;--------------------------------------
+[ 377]        :                                       ; err_chk routine
+[ 378]        :                                       ;--------------------------------------
+[ 379]    04E7:                                       err_chk        PROC    near
+[ 380]    04E7: 73 0F                                 jnc     exitproc        ;no error then exit procedure
+[ 381]    04E9: 8B D8                                 mov     bx,ax
+[ 382]    04EB: B4 09                                 mov     ah,9            ;display string
+[ 383]    04ED: 8B 97 2C 01                           mov     dx,errtbl[bx]   ;message offset
+[ 384]    04F1: CD 21                                 int     21h
+[ 385]    04F3: B8 00 4C                              mov     ax,4C00h        ;terminate on error
+[ 386]    04F6: CD 21                                 int     21h
+[ 387]    04F8: C3                                    exitproc:   ret
+[ 388]        :                                       err_chk        ENDP
+[ 389]        :                                       
+[ 390]        :                                       END     start
+[ 391]        :                                       
+[ 392]        :                                       end start ; set entry point and stop the assembler.
+[ 393]        :                                       
+ 
+===================================================================================================
+ 
+EXE HEADER - bytes from 0000 to 01FF inclusive.
+
+0000: 4D      -   exe signature (M)
+0001: 5A      -   exe signature (Z)
+0002: F9      -   bytes on last page (l.byte)
+0003: 00      -   bytes on last page (h.byte)
+0004: 04      -   512 byte pages in file (l.byte)
+0005: 00      -   512 byte pages in file (h.byte)
+0006: 02      -   relocations (l.byte)
+0007: 00      -   relocations (h.byte)
+0008: 20      -   paragraphs in header (l.byte)
+0009: 00      -   paragraphs in header (h.byte)
+000A: 00      -   minimum memory (l.byte)
+000B: 00      -   minimum memory (h.byte)
+000C: FF      -   maximum memory (l.byte)
+000D: FF      -   maximum memory (h.byte)
+000E: 00      -   SS - stack segment (l.byte)
+000F: 00      -   SS - stack segment (h.byte)
+0010: 00      -   SP - stack pointer (l.byte)
+0011: 01      -   SP - stack pointer (h.byte)
+0012: AA      -   check sum (l.byte)
+0013: D6      -   check sum (h.byte)
+0014: 00      -   IP - instruction pointer (l.byte)
+0015: 00      -   IP - instruction pointer (h.byte)
+0016: 2D      -   CS - code segment (l.byte)
+0017: 00      -   CS - code segment (h.byte)
+0018: 1E      -   relocation table adress (l.byte)
+0019: 00      -   relocation table adress (h.byte)
+001A: 00      -   overlay number (l.byte)
+001B: 00      -   overlay number (h.byte)
+001C: 01      -   signature (l.byte)
+001D: 00      -   signature (h.byte)
+001E: 01      -   relocation table - offset inside segment (l.byte)
+001F: 00      -   relocation table - offset inside segment (h.byte)
+0020: 2D      -   relocation table - segment anchor (l.byte)
+0021: 00      -   relocation table - segment anchor (h.byte)
+0022: 9F      -   relocation table - offset inside segment (l.byte)
+0023: 01      -   relocation table - offset inside segment (h.byte)
+0024: 2D      -   relocation table - segment anchor (l.byte)
+0025: 00      -   relocation table - segment anchor (h.byte)
+0026 to 01FF  -   reserved relocation area  (00) 
+
+
+
+
+===================================================================================================

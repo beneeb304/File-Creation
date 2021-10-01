@@ -1,0 +1,46 @@
+< THE SYMBOL TABLE >  Assignment 5_Neeb.exe  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+STACK                    	00000     	-5        	SEGMENT   	(ITSELF)  
+DATA                     	00010     	-5        	SEGMENT   	(ITSELF)  
+WELCOME_MSG              	00000     	1         	VAR       	data      
+FILE_MSG                 	0005A     	1         	VAR       	data      
+BYE_MSG                  	00081     	1         	VAR       	data      
+STR1                     	00093     	1         	VAR       	data      
+STR2                     	000A2     	1         	VAR       	data      
+STR3                     	000B0     	1         	VAR       	data      
+STR4                     	000C0     	1         	VAR       	data      
+STR5                     	000D0     	1         	VAR       	data      
+FILE_BUF                 	000DE     	1         	VAR       	data      
+FILE_NAME                	000F6     	1         	VAR       	data      
+DIR_NAME                 	00106     	1         	VAR       	data      
+DATASTRUCT               	0010D     	-1        	LABEL     	data      
+MAXLEN                   	0010D     	1         	VAR       	data      
+ACTLEN                   	0010E     	1         	VAR       	data      
+DATAFLD                  	0010F     	1         	VAR       	data      
+CRLFBUF                  	00127     	1         	VAR       	data      
+HANDLE1                  	0012A     	2         	VAR       	data      
+ERRTBL                   	0012C     	2         	VAR       	data      
+ERR1                     	00146     	1         	VAR       	data      
+ERR2                     	00160     	1         	VAR       	data      
+ERR3                     	00171     	1         	VAR       	data      
+ERR4                     	00182     	1         	VAR       	data      
+ERR5                     	00198     	1         	VAR       	data      
+ERR6                     	001A8     	1         	VAR       	data      
+ERR12                    	001B9     	1         	VAR       	data      
+CODE                     	0002D     	-5        	SEGMENT   	(ITSELF)  
+START                    	00000     	-1        	LABEL     	code      
+DISPLAY_NEWLINE          	00043     	-1        	NEAR      	code      
+READ_DATA                	00052     	-1        	NEAR      	code      
+GET_INPUT                	0018B     	-1        	NEAR      	code      
+CREATE_DIRECTORY         	0019E     	-1        	NEAR      	code      
+CREATE_FILE              	001AE     	-1        	NEAR      	code      
+CLOSE_FILE               	001BF     	-1        	NEAR      	code      
+READ_FILE                	001CB     	-1        	NEAR      	code      
+ERR_CHK                  	00217     	-1        	NEAR      	code      
+EXITPROC                 	00228     	-1        	LABEL     	code      
+===================================================================================================
+[ 10/1/2021  --  3:11:35 PM ] 
+< END >
+ 
